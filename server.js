@@ -1,5 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+// Imports the Google Cloud client library
+const vision = require('@google-cloud/vision');
 
 
 var app = express();
@@ -32,8 +34,39 @@ app.post('/messages', (req, res) => {
 })
 
 io.on('connection', (socket) => {
-  console.log('a user connected')
+  // console.log('a user connected')
 })
+
+// gcloud stuff
+
+
+/*
+var visionClient = vision({
+  projectId: 'keyword-and-description-match',
+  keyFilename: 'c:/dev/gcloud/access-vision.json'
+});
+*/
+
+
+// Creates a google vision client
+const client = new vision.ImageAnnotatorClient();
+
+// Performs label detection on the image file
+client
+  .labelDetection('c:/Dev/vision/resource/10.jpg')
+  .then(results => {
+    const labels = results[0].labelAnnotations;
+
+    console.log('Labels detected in the image are:');
+    labels.forEach(label => console.log(label.description));
+  })
+  .catch(err => {
+    console.error('ERROR:', err);
+  });
+
+
+
+// end gcloud stuff
 
 var server = http.listen(3000, () => {
 
